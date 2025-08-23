@@ -30,5 +30,10 @@
     "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.26",
     "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/swagger-jsdoc": "^6.0.4"
   }
 }
