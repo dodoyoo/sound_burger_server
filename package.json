@@ -2,8 +2,9 @@
   "name": "sound_burger_server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.ts",
   "scripts": {
+    "dev": "env-cmd -f .env.development nodemon --config nodemon.json --exec ts-node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
