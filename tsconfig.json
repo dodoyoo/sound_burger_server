@@ -17,6 +17,8 @@
     // and npm install -D @types/node
 
     "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
 
     // Other Outputs
     "sourceMap": true,
