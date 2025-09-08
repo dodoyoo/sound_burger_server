@@ -27,6 +27,7 @@ export class UserController {
     this.userRepository = userRepository;
   }
 
+  // 유저 회원가입
   public async signUp(req: Request, res: Response) {
     try {
       const { email, password, nickname, profile_image } = req.body;
