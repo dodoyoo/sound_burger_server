@@ -28,8 +28,8 @@ export class User {
   @Column({ type: 'tinyint', width: 1, nullable: false, default: 0 })
   is_verified: boolean = false;
 
-  @Column({ type: 'varchar', length: 500, nullable: false })
-  email_verification_token!: string;
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  email_verification_token!: string | null;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at!: Date;
