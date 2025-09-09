@@ -29,6 +29,18 @@ export class UserRepository {
     }
   }
 
+  async findByEmail(email: string): Promise<User | undefined> {
+    try {
+      const emails = (await this.repository
+        .createQueryBuilder('user')
+        .where('user.email = :email', { email })
+        .getOne()) as User | undefined;
+      return emails;
+    } catch (error) {
+      console.error('User를 찾을 수 없습니다:', error);
+    }
+  }
+
   async findByVerification_token(token: string): Promise<User | null> {
     return await this.repository.findOne({
       where: { email_verification_token: token },
