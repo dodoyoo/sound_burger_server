@@ -6,6 +6,7 @@ import {
   InvalidPropertyError,
   PropertyRequiredError,
 } from '../../utils/customError';
+import { sendVerificationEmail } from '../../utils/emailConfirm';
 import { UserRepository } from './userRepository';
 import { User } from './userEntity';
 import { reportErrorMessage } from '../../utils/errorHandling';
@@ -40,18 +41,42 @@ export class UserController {
       }
       const hashedPassword: string = await hashPassword(password);
 
-      //   const verification_token = crypto.randomBytes(32).toString('hex');
-      //   await this.userRepository.createUser({
-      //     email,
-      //     password: hashedPassword,
-      //     nickname,
-      //     profile_image,
-      //     is_verified: 0,
-      //     email_verification_token: false
-      //   });
+      const verification_token = crypto.randomBytes(32).toString('hex');
+      await this.userRepository.createUser({
+        email,
+        password: hashedPassword,
+        nickname,
+        profile_image,
+        is_verified: false,
+      });
+      await sendVerificationEmail(email, verification_token);
       res.status(201).json({ message: '회원가입 성공' });
     } catch (err: unknown) {
       return reportErrorMessage(err, res);
     }
+  }
+
+  public async verifyEmail(req: Request, res: Response) {
+    const { token } = req.query;
+
+    if (!token) {
+      return new PropertyRequiredError('토큰이 필요합니다.');
+    }
+
+    const user = await this.userRepository.findByVerification_token(
+      token as string
+    );
+    if (!user) {
+      return new InvalidPropertyError('유효하지 않은 토큰입니다.');
+    }
+
+    user.is_verified = true;
+    user.email_verification_token = null;
+    await this.userRepository.updateUser(user);
+
+    res.redirect(
+      `http://localhost:3000/signUp.html?verifiedEmail=${user.email}`
+    );
+    res.status(200).json({ message: '이메일 인증 완료' });
   }
 }

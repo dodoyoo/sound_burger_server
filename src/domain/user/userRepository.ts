@@ -9,6 +9,15 @@ export class UserRepository {
     this.repository = (dataSource || AppDataSource).getRepository(User);
   }
 
+  async updateUser(user: User): Promise<User> {
+    try {
+      return await this.repository.save(user);
+    } catch (error) {
+      console.error('수정을 할 수 없습니다', error);
+      throw new Error('Could not update user');
+    }
+  }
+
   // 유저 회원가입
   async createUser(userData: Partial<User>): Promise<User> {
     try {
@@ -18,5 +27,11 @@ export class UserRepository {
       console.error('Error creating user:', error);
       throw new Error('Could not create user');
     }
+  }
+
+  async findByVerification_token(token: string): Promise<User | null> {
+    return await this.repository.findOne({
+      where: { email_verification_token: token },
+    });
   }
 }
