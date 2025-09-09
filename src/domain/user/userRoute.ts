@@ -8,4 +8,7 @@ const userController = new UserController(userRepository);
 
 router.post('/api/sign-up', (req, res) => userController.signUp(req, res));
 
+router.post('/api/sign-in', (req, res) => userController.signIn(req, res));
+
+router.get('/api/verify', (req, res) => userController.verifyEmail(req, res));
 export default router;

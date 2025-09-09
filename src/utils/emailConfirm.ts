@@ -18,7 +18,7 @@ export const sendVerificationEmail = async (
     from: 'assad15903@naver.com',
     to: email,
     subject: '이메일 인증',
-    text: `아래 링크를 클릭하여 이메일을 인증하세요: http://localhost.com/api/verify?token=${verification_token}`,
+    text: `아래 링크를 클릭하여 이메일을 인증하세요: http://localhost:3000/api/verify?token=${verification_token}`,
   };
 
   await transporter.sendMail(mailOption);
