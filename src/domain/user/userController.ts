@@ -40,15 +40,14 @@ export class UserController {
       }
       const hashedPassword: string = await hashPassword(password);
 
-      //   const verification_token = crypto.randomBytes(32).toString('hex');
-      //   await this.userRepository.createUser({
-      //     email,
-      //     password: hashedPassword,
-      //     nickname,
-      //     profile_image,
-      //     is_verified: 0,
-      //     email_verification_token: false
-      //   });
+      const verification_token = crypto.randomBytes(32).toString('hex');
+      await this.userRepository.createUser({
+        email,
+        password: hashedPassword,
+        nickname,
+        profile_image,
+        is_verified: false,
+      });
       res.status(201).json({ message: '회원가입 성공' });
     } catch (err: unknown) {
       return reportErrorMessage(err, res);
