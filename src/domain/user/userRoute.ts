@@ -7,3 +7,5 @@ const userRepository = new UserRepository();
 const userController = new UserController(userRepository);
 
 router.post('/api/sign-up', (req, res) => userController.signUp(req, res));
+
+export default router;
