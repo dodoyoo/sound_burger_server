@@ -41,7 +41,7 @@ export class UserRepository {
     }
   }
 
-  async findByVerification_token(token: string): Promise<User | null> {
+  async findByVerificationToken(token: string): Promise<User | null> {
     return await this.repository.findOne({
       where: { email_verification_token: token },
     });

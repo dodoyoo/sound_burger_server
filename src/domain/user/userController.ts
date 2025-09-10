@@ -58,7 +58,39 @@ export class UserController {
         email_verification_token: verification_token,
       });
       await sendVerificationEmail(email, verification_token);
-      res.status(201).json({ message: '회원가입 성공' });
+      res
+        .status(201)
+        .json({ message: '회원가입 성공, 이메일 인증을 완료해주세요' });
+    } catch (err: unknown) {
+      return reportErrorMessage(err, res);
+    }
+  }
+
+  // 이메일 인증
+  public async verifyEmail(req: Request, res: Response) {
+    try {
+      const { token } = req.query;
+
+      if (!token) {
+        return new PropertyRequiredError('토큰이 필요합니다.');
+      }
+
+      const user = await this.userRepository.findByVerificationToken(
+        token as string
+      );
+      if (!user) {
+        return new InvalidPropertyError('유효하지 않은 토큰입니다.');
+      }
+
+      if (user.is_verified) {
+        return new InvalidPropertyError('이미 인증된 계정입니다.');
+      }
+
+      user.is_verified = true;
+      user.email_verification_token = null;
+      await this.userRepository.updateUser(user);
+
+      res.redirect(`http://localhost:3000/verifiedEmail=${user.email}`);
     } catch (err: unknown) {
       return reportErrorMessage(err, res);
     }
@@ -67,8 +99,7 @@ export class UserController {
   public async signIn(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
-      const emailRegex =
-        /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+
       if (!emailRegex.test(email)) {
         throw new InvalidPropertyError('잘못된 이메일 형식입니다.');
       }
@@ -112,34 +143,6 @@ export class UserController {
           profileImage: user.profile_image,
         },
       });
-    } catch (err: unknown) {
-      return reportErrorMessage(err, res);
-    }
-  }
-
-  // 이메일 인증
-  public async verifyEmail(req: Request, res: Response) {
-    try {
-      const { token } = req.query;
-
-      if (!token) {
-        return new PropertyRequiredError('토큰이 필요합니다.');
-      }
-
-      const user = await this.userRepository.findByVerification_token(
-        token as string
-      );
-      if (!user) {
-        return new InvalidPropertyError('유효하지 않은 토큰입니다.');
-      }
-
-      user.is_verified = true;
-      await this.userRepository.updateUser(user);
-
-      res.redirect(
-        `http://localhost:3000/signUp.html?verifiedEmail=${user.email}`
-      );
-      res.status(200).json({ message: '이메일 인증 완료' });
     } catch (err: unknown) {
       return reportErrorMessage(err, res);
     }
