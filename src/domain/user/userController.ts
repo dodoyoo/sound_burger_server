@@ -6,10 +6,12 @@ import {
   InvalidPropertyError,
   PropertyRequiredError,
 } from '../../utils/customError';
+import SpotifyApi from '../../config/spotify';
 import { sendVerificationEmail } from '../../utils/emailConfirm';
 import { UserRepository } from './userRepository';
 import { User } from './userEntity';
 import { reportErrorMessage } from '../../utils/errorHandling';
+import spotifyApi from '../../config/spotify';
 
 const comparePassword = async (
   inputPassword: string,
@@ -26,6 +28,11 @@ const passwordRegex =
 const hashPassword = async (password: string): Promise<string> => {
   const saltRounds = 10;
   return bcrypt.hash(password, saltRounds);
+};
+
+const getAccessToken = async () => {
+  const data = await SpotifyApi.clientCredentialsGrant();
+  SpotifyApi.setAccessToken(data.body['access_token']);
 };
 
 export class UserController {
@@ -145,6 +152,32 @@ export class UserController {
       });
     } catch (err: unknown) {
       return reportErrorMessage(err, res);
+    }
+  }
+
+  public async getTop100(req: Request, res: Response) {
+    try {
+      await getAccessToken();
+
+      const playlistId = '37i9dQZEVXbMDoHDwVN2tF';
+      const playlistData = await spotifyApi.getPlaylist(playlistId);
+
+      const tracks = playlistData.body.tracks.items
+        .filter((item) => item.track !== null)
+        .map((item) => ({
+          spotifyId: item.track!.id,
+          title: item.track!.name,
+          artist: item.track!.artists.map((a) => a.name).join(', '),
+          album: item.track!.album.name,
+          albumImage: item.track!.album.images[0]?.url || null,
+          durationMs: item.track!.duration_ms,
+          previewUrl: item.track!.preview_url,
+          releaseDate: item.track!.album.release_date,
+        }));
+      res.json({ playlistName: playlistData.body.name, tracks });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Spotify Top 100 조회 실패' });
     }
   }
 }

@@ -6,3 +6,5 @@ const spotifyApi = new SpotifyWebApi({
   redirectUri:
     process.env.SPOTIFY_REDIRECT_URI || 'http:127.0.0.1:3000/callback',
 });
+
+export default spotifyApi;
