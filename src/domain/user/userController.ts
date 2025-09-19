@@ -57,8 +57,8 @@ export class UserController {
 
       const verification_token = crypto.randomBytes(32).toString('hex');
       await this.userRepository.createUser({
-        email,
-        password: hashedPassword,
+        // email,
+        // password: hashedPassword,
         nickname,
         profile_image,
         is_verified: false,
@@ -97,7 +97,7 @@ export class UserController {
       user.email_verification_token = null;
       await this.userRepository.updateUser(user);
 
-      res.redirect(`http://localhost:3000/verifiedEmail=${user.email}`);
+      // res.redirect(`http://localhost:3000/verifiedEmail=${user.email}`);
     } catch (err: unknown) {
       return reportErrorMessage(err, res);
     }
@@ -124,32 +124,32 @@ export class UserController {
         );
       }
 
-      const isPasswordValid: boolean = await comparePassword(
-        password,
-        user.password
-      );
+      // const isPasswordValid: boolean = await comparePassword(
+      // password,
+      // user.password
+      // );
 
-      if (!isPasswordValid) {
-        throw new InvalidPropertyError('비밀번호가 일치하지 않습니다.');
-      }
-      const token = jwt.sign(
-        { userId: user.id, email: user.email },
-        process.env.JWT_SECRET_KEY!,
-        {
-          expiresIn: '7d',
-        }
-      );
+      // if (!isPasswordValid) {
+      //   throw new InvalidPropertyError('비밀번호가 일치하지 않습니다.');
+      // }
+      // const token = jwt.sign(
+      //   { userId: user.id, email: user.email },
+      //   process.env.JWT_SECRET_KEY!,
+      //   {
+      //     expiresIn: '7d',
+      //   }
+      // );
       console.log('JWT_SECRET_KEY:', process.env.JWT_SECRET_KEY);
 
-      res.status(200).json({
-        message: '로그인 성공',
-        user: {
-          token,
-          email: user.email,
-          nickname: user.nickname,
-          profileImage: user.profile_image,
-        },
-      });
+      // res.status(200).json({
+      //   message: '로그인 성공',
+      //   user: {
+      //     token,
+      //     email: user.email,
+      //     nickname: user.nickname,
+      //     profileImage: user.profile_image,
+      //   },
+      // });
     } catch (err: unknown) {
       return reportErrorMessage(err, res);
     }
