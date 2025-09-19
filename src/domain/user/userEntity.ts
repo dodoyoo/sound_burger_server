@@ -13,8 +13,11 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', length: 100, nullable: false, unique: true })
-  spotifyId!: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true, unique: true })
+  spotifyId!: string;
+
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  display_name!: string | null;
 
   @Column({ type: 'varchar', length: 50, nullable: false })
   nickname!: string;
