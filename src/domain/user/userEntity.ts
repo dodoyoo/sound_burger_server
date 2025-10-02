@@ -13,17 +13,26 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
-  email!: string;
+  @Column({ type: 'varchar', length: 100, nullable: true, unique: true })
+  spotifyId!: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: false })
-  password!: string;
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  display_name!: string | null;
 
   @Column({ type: 'varchar', length: 50, nullable: false })
   nickname!: string;
 
   @Column({ type: 'varchar', length: 2048, nullable: true })
   profile_image!: string;
+
+  @Column({ type: 'text', nullable: true })
+  spotifyAccessToken!: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  spotifyRefreshToken!: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  spotifyTokenExpiresAt!: Date | null;
 
   @Column({ type: 'tinyint', width: 1, nullable: false, default: 0 })
   is_verified: boolean = false;
